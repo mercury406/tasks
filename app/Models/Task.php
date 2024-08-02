@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,13 +23,16 @@ class Task extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $casts = [];
+    protected $casts = [
+        'status' => TaskStatus::class
+    ];
 
     protected $fillable = [
         'title',
         'slug',
         'description',
         'user_id',
+        'status'
     ];
 
     public function user(): BelongsTo

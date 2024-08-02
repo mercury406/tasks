@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,8 @@ class TaskFactory extends Factory
         return [
             'title' => $this->faker->sentence,
             'slug' => $this->faker->slug,
-            'description' => $this->faker->text
+            'description' => $this->faker->text,
+            'status' => TaskStatus::Created->value
         ];
     }
 }

@@ -72,6 +72,7 @@ class TaskControllerTest extends TestCase
         $updateData = [
             'title' => 'title',
             'description' => 'description',
+            'status' => 2
         ];
 
         $response = $this->actingAs($user)->put('api/tasks/' . $task->slug, $updateData);
