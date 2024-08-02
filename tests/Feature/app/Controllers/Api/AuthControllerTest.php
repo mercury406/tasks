@@ -14,8 +14,7 @@ class AuthControllerTest extends TestCase
     private array $userData = [
         'name' => "Murat",
         'email' => 'murat@mail.uz',
-        'password' => 'murat123',
-        'password_confirmation' => 'murat123'
+        'password' => 'murat123'
     ];
 
     private array $headers = [
@@ -23,6 +22,7 @@ class AuthControllerTest extends TestCase
     ];
     public function testRegister()
     {
+        $this->userData = array_merge($this->userData, ['password_confirmation' => $this->userData['password']]);
         $response = $this->post('/api/register', $this->userData, $this->headers);
 
         $response->assertCreated();
@@ -36,7 +36,8 @@ class AuthControllerTest extends TestCase
 
     public function testLogin()
     {
-        $this->post('/api/register', $this->userData, $this->headers);
+        User::factory()->create($this->userData);
+
         $loginData = $this->userData;
         unset($loginData['name']);
         unset($loginData['password_confirmation']);
@@ -48,34 +49,30 @@ class AuthControllerTest extends TestCase
         $response->assertJsonPath('name', 'Murat');
         $response->assertJsonPath('email', 'murat@mail.uz');
 
-        $this->assertDatabaseCount('personal_access_tokens', 2);
+        $this->assertDatabaseCount('personal_access_tokens', 1);
     }
 
     public function testWrongLogin()
     {
-        $this->post('/api/register', $this->userData, $this->headers);
-        $this->assertDatabaseCount('personal_access_tokens', 1);
-        $loginData = $this->userData;
-        unset($loginData['name']);
-        unset($loginData['password_confirmation']);
+        User::factory()->create($this->userData);
 
         $loginData['email'] = 'a@a.uz';
+        $loginData['password'] = 'qwerty1234';
 
         $response = $this->post('/api/login', $loginData, $this->headers);
 
         $response->assertJsonPath('message', "You've given wrong credentials");
 
-        $this->assertDatabaseCount('personal_access_tokens', 1);
+        $this->assertDatabaseCount('personal_access_tokens',0);
     }
 
 
     public function testLogout()
     {
-        $this->post('/api/register', $this->userData, $this->headers);
-        $this->assertDatabaseCount('personal_access_tokens', 1);
+        $user = User::factory()->create($this->userData);
 
-        $response = $this->actingAs(User::first())
-            ->post('/api/logout', $this->userData, $this->headers);
+        $response = $this->actingAs($user)
+            ->post('/api/logout');
 
         $response->assertNoContent();
         $this->assertDatabaseCount('personal_access_tokens', 0);
@@ -84,7 +81,7 @@ class AuthControllerTest extends TestCase
 
     public function testLogoutWithoutUser()
     {
-        $response = $this->post('/api/logout', $this->userData, $this->headers);
+        $response = $this->post('/api/logout', headers: $this->headers);
 
         $response->assertUnauthorized();
     }
