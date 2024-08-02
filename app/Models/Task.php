@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $slug
  * @property string $description
  * @property int $user_id
+ * @property int $status
  *
  * @property BelongsTo<User> $user
  * @method static forUser(int $userId)
