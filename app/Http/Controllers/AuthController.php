@@ -56,6 +56,7 @@ class AuthController extends Controller
     {
         $this->authService->logout();
         Auth::logout();
+        Session::flush();
         return to_route('login');
     }
 

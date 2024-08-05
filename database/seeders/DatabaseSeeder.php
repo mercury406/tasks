@@ -20,9 +20,13 @@ class DatabaseSeeder extends Seeder
             Task::factory(5)->for($user)->create();
 
         }
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+         $user = \App\Models\User::factory()->create([
+             'name' => 'Test User',
+             'email' => 'test@example.com',
+             'password' => 'password'
+         ]);
+
+        Task::factory(15)->for($user)->create();
+
     }
 }
