@@ -10,7 +10,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
 
 
-Route::apiResource('tasks', TaskController::class)
+Route::as('api')->apiResource('tasks', TaskController::class)
     ->scoped([
         'task' => 'slug'
     ]);
